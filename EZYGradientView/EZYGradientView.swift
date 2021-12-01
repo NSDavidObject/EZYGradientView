@@ -29,24 +29,9 @@ open class EZYGradientView: UIView
   
   //MARK:- Properties
   /// First color of gradient i.e. it appears on top when angleº set to 0.0.
-  @IBInspectable open var firstColor: UIColor = UIColor.white
-    {
-    didSet
-    {
-      if gradientLayer != nil
-      {
-        self.updateColors()
-      }
-    }
-  }
-  
-  /// Second color of gradient i.e. it appears in bottom when angleº set to 0.0.
-  @IBInspectable open var secondColor: UIColor = UIColor.white
-    {
-    didSet
-    {
-      if gradientLayer != nil
-      {
+  open var colors: [UIColor] = [UIColor.white, .white] {
+    didSet {
+      if gradientLayer != nil {
         self.updateColors()
       }
     }
@@ -164,9 +149,8 @@ open class EZYGradientView: UIView
   /**
    Step 1
    */
-  fileprivate func updateColors()
-  {
-    gradientLayer!.colors = [firstColor.cgColor, secondColor.cgColor]
+  fileprivate func updateColors() {
+    gradientLayer!.colors = colors.map({ $0.cgColor })
   }
   /**
    Step 2
@@ -190,20 +174,16 @@ open class EZYGradientView: UIView
    */
   fileprivate func checkBlurStatusAndUpdateOpacity()
   {
-    if isBlur
-    {
-      if blurView == nil
-      {
+    if isBlur {
+      if blurView == nil {
         let blurEffect = UIBlurEffect(style: .light)
         blurView = UIVisualEffectView(effect: blurEffect)
         blurView?.frame = self.bounds
         blurLayer = blurView?.layer
       }
-      gradientLayer!.colors = [blurColor(firstColor), blurColor(secondColor)]
+      gradientLayer!.colors = colors.map({ blurColor($0) })
       self.layer.insertSublayer(blurLayer!, below: gradientLayer)
-    }
-    else
-    {
+    } else {
       blurLayer?.removeFromSuperlayer()
       blurLayer = nil
       blurView = nil
